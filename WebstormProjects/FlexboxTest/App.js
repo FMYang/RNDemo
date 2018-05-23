@@ -246,40 +246,40 @@ import ChatScreen from "./src/snece/ChatScreen";
 // })
 
 // RN 导航栏的使用
-const Navigator = StackNavigator(
-    // 设置导航要展示的页面
-    {
-        HomeScreen: {screen: HomeScreen},
-        ChatScreen: {screen: ChatScreen}
-    },
-    //设置navigationOptions属性对象
-    {
-        navigationOptions: {
-            title: '首页',
-            headerBackTitle: null,
-            headerTintColor: '#333333',
-            showIcon: true,
-            swipeEnabled: false,
-            animationEnabled: false,
-        },
-        mode: 'card',
-    }
-);
-
-export default class FlexboxTest extends Component {
-    render() {
-        return (
-            <Navigator/>
-        )
-    }
-}
-
-// TN Tabbar使用
+// const Navigator = StackNavigator(
+//     // 设置导航要展示的页面
+//     {
+//         HomeScreen: {screen: HomeScreen},
+//         ChatScreen: {screen: ChatScreen}
+//     },
+//     //设置navigationOptions属性对象
+//     {
+//         navigationOptions: {
+//             title: '首页',
+//             headerBackTitle: null,
+//             headerTintColor: '#333333',
+//             showIcon: true,
+//             swipeEnabled: false,
+//             animationEnabled: false,
+//         },
+//         mode: 'card',
+//     }
+// );
+//
 // export default class FlexboxTest extends Component {
 //     render() {
-//         return
+//         return (
+//             <Navigator/>
+//         )
 //     }
 // }
+
+// TN Tabbar使用
+export default class FlexboxTest extends Component {
+    render() {
+
+    }
+}
 
 
 AppRegistry.registerComponent('FlexboxTest', () => FlexboxTest)
