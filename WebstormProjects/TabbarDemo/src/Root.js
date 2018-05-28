@@ -6,18 +6,30 @@
  */
 
 import React, { Component } from 'react'
-import { TabNavigator, StackNavigator, TabBarBottom } from 'react-navigation'
+import {StackNavigator, TabNavigator, TabBarBottom} from 'react-navigation';
+
 import Feed from "./Feed";
 import Detail from "./Detail";
 import Setting from "./Setting";
 import Me from "./Me";
 import MeDetail from "./MeDetail"
+import TabBarItem from "./TabBarItem";
+import WeiToutiao from "./WeiToutiao";
+import Video from "./Video";
 
-export const FeedStack = StackNavigator({
-    Feed: {
+export const HomeStack = StackNavigator({
+    Home: {
         screen: Feed,
         navigationOptions: {
             title: '首页',
+            tabBarIcon:({focused, tintColor}) => (
+                <TabBarItem
+                    tintColor={tintColor}
+                    focused={focused}
+                    normalImage={require('./img/tabbar/home_tabbar.png')}
+                    selectedImage={require('./img/tabbar/home_tabbar_press.png')}
+                />
+            )
         },
     },
     Detail: {
@@ -28,58 +40,95 @@ export const FeedStack = StackNavigator({
     }
 })
 
-export const MeStack = StackNavigator({
-    Me: {
+export const XiguaStack = StackNavigator({
+    Xigua: {
         screen: Me,
         navigationOptions: {
-            title: '我的',
+            title: '西瓜视频',
+            tabBarIcon:({focused, tintColor}) => (
+                <TabBarItem
+                    tintColor={tintColor}
+                    focused={focused}
+                    normalImage={require('./img/tabbar/video_tabbar.png')}
+                    selectedImage={require('./img/tabbar/video_tabbar_press.png')}
+                />
+            )
         }
     },
-    MeDetail: {
-        screen: MeDetail,
+})
+
+export const WeToutiaoStack = StackNavigator({
+    WeiToutiao: {
+        screen: WeiToutiao,
         navigationOptions: {
-            title: 'MeDetail'
+            title: '微头条',
+            tabBarIcon:({focused, tintColor}) => (
+                <TabBarItem
+                    tintColor={tintColor}
+                    focused={focused}
+                    normalImage={require('./img/tabbar/weitoutiao_tabbar.png')}
+                    selectedImage={require('./img/tabbar/weitoutiao_tabbar_press.png')}
+                />
+            )
         }
-    }
+    },
+})
+
+export const VideoStack = StackNavigator({
+    Video: {
+        screen: Video,
+        navigationOptions: {
+            title: '小视频',
+            tabBarIcon:({focused, tintColor}) => (
+                <TabBarItem
+                    tintColor={tintColor}
+                    focused={focused}
+                    normalImage={require('./img/tabbar/huoshan_tabbar.png')}
+                    selectedImage={require('./img/tabbar/huoshan_tabbar_press.png')}
+                />
+            )
+        }
+    },
 })
 
 export const Tabs = TabNavigator(
     {
-        Feed: {
-            screen: FeedStack, //Feed,
+        Home: {
+            screen: HomeStack,
             navigationOptions: {
                 tabBarLabel: '首页',
+
             }
         },
-        Me: {
-            screen: MeStack, //Me,
+        Xigua: {
+            screen: XiguaStack,
             navigationOptions: {
-                tabBarLabel: '我的',
+                tabBarLabel: '西瓜视频',
             }
         },
+        Weitoutiao: {
+            screen: WeToutiaoStack,
+            navigationOptions: {
+                tabBarLabel: '微头条',
+            }
+        },
+        Video: {
+            screen: VideoStack,
+            navigationOptions: {
+                tabBarLabel: '小视频',
+            }
+        }
     },
     {
-    tabBarPosition: 'bottom',
-    // swipeEnabled: true,
-    // animationEnabled:true,
+        tabBarComponent: TabBarBottom,
+        tabBarPosition: 'bottom',
+        lazy: true,
+        animationEnabled: false,
+        swipeEnabled: false,
+        tabBarOptions: {
+            activeTintColor: 'red',
+            inactiveTintColor: '#000000',
+            style: {backgroundColor: '#ffffff'},
+        },
     }
 )
-
-export const SettingsStack = StackNavigator({
-    Settings: {
-        screen: Setting,
-        navigationOptions: {
-            title: 'Setting',
-        }
-    }
-})
-
-export const Root = StackNavigator({
-    Tabs: {
-        screen: Tabs
-    },
-    Settings: {
-        screen: SettingsStack
-    },
-    mode: 'modal'
-})

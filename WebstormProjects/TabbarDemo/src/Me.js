@@ -17,7 +17,7 @@ class Me extends Component {
     render() {
         return(
             <TouchableOpacity onPress={() => this.props.navigation.navigate('MeDetail')}>
-                <Text> Me </Text>
+                <Text> Xigua </Text>
             </TouchableOpacity>
         )
     }
