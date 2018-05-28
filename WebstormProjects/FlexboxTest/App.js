@@ -15,6 +15,7 @@ import {StackNavigator, TabNavigator, TabBarBottom} from 'react-navigation';
 import HomeScreen from "./src/snece/HomeScreen"
 import ChatScreen from "./src/snece/ChatScreen";
 import TabBarItem from "./src/snece/TabBarItem";
+import TestScreen from "./src/snece/TestScreen";
 
 // RN cell 布局、本地图片加载
 // export default class FlexboxTest extends Component {
@@ -278,56 +279,60 @@ import TabBarItem from "./src/snece/TabBarItem";
 // TN Tabbar使用
 const Tab = TabNavigator(
     {
-    Home: {
-        screen: HomeScreen,
-        navigationOptions:({navigation}) => ({
-            tabBarLabel: '首页',
-            tabBarIcon:({focused, tintColor}) => (
-                <TabBarItem
-                    tintColor={tintColor}
-                    focused={focused}
-                    normalImage={require('./src/img/tabbar/tabbar_homepage.png')}
-                    selectedImage={require('./src/img/tabbar/tabbar_homepage_selected.png')}
-                />
-            )
-        }),
+        Home: {
+            screen: HomeScreen,
+            navigationOptions:({navigation}) => ({
+                title: "首页",
+                // tabBarLabel: '首页',
+                tabBarIcon:({focused, tintColor}) => (
+                    <TabBarItem
+                        tintColor={tintColor}
+                        focused={focused}
+                        normalImage={require('./src/img/tabbar/tabbar_homepage.png')}
+                        selectedImage={require('./src/img/tabbar/tabbar_homepage_selected.png')}
+                    />
+                )
+            }),
+        },
+
+        Mine: {
+            screen: ChatScreen,
+            navigationOptions:({navigation}) => ({
+                title: '我',
+                // tabBarLabel: '我',
+                tabBarIcon:({focused, tintColor}) => (
+                    <TabBarItem
+                        tintColor={tintColor}
+                        focused={focused}
+                        normalImage={require('./src/img/tabbar/tabbar_mine.png')}
+                        selectedImage={require('./src/img/tabbar/tabbar_mine_selected.png')}
+                    />
+                )
+            }),
+        },
     },
 
-    Mine: {
-        screen: ChatScreen,
-        navigationOptions:({navigation}) => ({
-            tabBarLabel: '我',
-            tabBarIcon:({focused, tintColor}) => (
-                <TabBarItem
-                    tintColor={tintColor}
-                    focused={focused}
-                    normalImage={require('./src/img/tabbar/tabbar_mine.png')}
-                    selectedImage={require('./src/img/tabbar/tabbar_mine_selected.png')}
-                />
-            )
-        }),
-    },
-    },
 
-
-{
-    tabBarComponent: TabBarBottom,
-    tabBarPosition:'bottom',
-}
+    {
+        tabBarComponent: TabBarBottom,
+        tabBarPosition:'bottom',
+    },
 )
 
 const Navigator = StackNavigator(
     {
         Tab: {screen: Tab},
+        TestScreen: {screen: TestScreen}
     },
     {
         navigationOptions: {
             headerTintColor: '#333333',
             showIcon: true,
+            title: "sss",
         },
         mode: 'card',
     },
-    )
+)
 
 export default class FlexboxTest extends Component {
     render() {

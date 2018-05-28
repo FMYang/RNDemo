@@ -10,13 +10,13 @@ import { Platform, StyleSheet, AppRegistry, View, Text, Button, TouchableOpacity
 
 export default class HomeScreen extends Component {
     static navigationOptions = {
-        title: 'home',
+        headerTitle: 'home',
     };
     render() {
         return (
             <View style={{flex: 1, backgroundColor: 'white'}}>
                 <Button
-                    onPress={() => this.props.navigation.navigate('ChatScreen')}
+                    onPress={() => this.props.navigation.navigate('TestScreen')}
                     title={'Tap me to jump!'}
                 />
             </View>
