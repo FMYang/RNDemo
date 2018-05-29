@@ -22,6 +22,7 @@ type State = {
 var dataList = Array()
 
 class Home extends PureComponent<State> {
+
     // 构造方法
     constructor(props: Object) {
         super(props)

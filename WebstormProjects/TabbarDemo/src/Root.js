@@ -29,13 +29,14 @@ export const HomeStack = StackNavigator({
                     normalImage={require('./img/tabbar/home_tabbar.png')}
                     selectedImage={require('./img/tabbar/home_tabbar_press.png')}
                 />
-            )
+            ),
         },
     },
     Detail: {
         screen: Detail,
         navigationOptions: {
-            title: ''
+            title: '',
+            tabBarVisible: false, // push的时候隐藏tabbar
         }
     }
 })
@@ -97,7 +98,6 @@ export const Tabs = TabNavigator(
             screen: HomeStack,
             navigationOptions: {
                 tabBarLabel: '首页',
-
             }
         },
         Xigua: {
@@ -122,8 +122,8 @@ export const Tabs = TabNavigator(
     {
         tabBarComponent: TabBarBottom,
         tabBarPosition: 'bottom',
-        // lazy: true,
-        // animationEnabled: false,
+        animationEnabled: false,
+        lazyLoad: true,
         swipeEnabled: false,
         tabBarOptions: {
             activeTintColor: 'red',
