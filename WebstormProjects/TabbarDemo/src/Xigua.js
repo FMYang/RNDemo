@@ -9,11 +9,11 @@ import React, { Component } from 'react'
 import {
     Text,
     View,
-    TouchableOpacity
+    TouchableOpacity,
 } from 'react-native';
 
 
-class Me extends Component {
+class Xigua extends Component {
     render() {
         return(
             <TouchableOpacity onPress={() => this.props.navigation.navigate('MeDetail')}>
@@ -23,4 +23,4 @@ class Me extends Component {
     }
 }
 
-export default Me
+export default Xigua

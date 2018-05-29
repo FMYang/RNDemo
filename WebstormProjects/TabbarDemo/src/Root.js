@@ -8,20 +8,20 @@
 import React, { Component } from 'react'
 import {StackNavigator, TabNavigator, TabBarBottom} from 'react-navigation';
 
-import Feed from "./Feed";
+import Home from "./Home";
 import Detail from "./Detail";
-import Setting from "./Setting";
-import Me from "./Me";
-import MeDetail from "./MeDetail"
 import TabBarItem from "./TabBarItem";
 import WeiToutiao from "./WeiToutiao";
 import Video from "./Video";
+import Xigua from "./Xigua";
 
 export const HomeStack = StackNavigator({
     Home: {
-        screen: Feed,
+        screen: Home,
         navigationOptions: {
             title: '首页',
+            headerTintColor: 'white',
+            headerStyle: { backgroundColor: '#d43d3d' },
             tabBarIcon:({focused, tintColor}) => (
                 <TabBarItem
                     tintColor={tintColor}
@@ -42,7 +42,7 @@ export const HomeStack = StackNavigator({
 
 export const XiguaStack = StackNavigator({
     Xigua: {
-        screen: Me,
+        screen: Xigua,
         navigationOptions: {
             title: '西瓜视频',
             tabBarIcon:({focused, tintColor}) => (
@@ -122,13 +122,13 @@ export const Tabs = TabNavigator(
     {
         tabBarComponent: TabBarBottom,
         tabBarPosition: 'bottom',
-        lazy: true,
-        animationEnabled: false,
+        // lazy: true,
+        // animationEnabled: false,
         swipeEnabled: false,
         tabBarOptions: {
             activeTintColor: 'red',
             inactiveTintColor: '#000000',
-            style: {backgroundColor: '#ffffff'},
+            // style: {backgroundColor: '#ffffff'},
         },
     }
 )

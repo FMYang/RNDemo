@@ -9,7 +9,7 @@ import React, { Component } from 'react'
 import {
     Text,
     View,
-    TouchableOpacity
+    TouchableOpacity,
 } from 'react-native';
 
 class Video extends Component {
