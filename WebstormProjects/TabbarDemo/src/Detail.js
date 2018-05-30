@@ -9,7 +9,8 @@ import React, { Component } from 'react'
 import {
     Text,
     View,
-    WebView
+    WebView,
+    Platform
 } from 'react-native';
 
 type Props = {
@@ -63,9 +64,14 @@ class Detail extends Component<Props, State> {
     }
 
     render() {
-        let html = "<html style='font-size: 45px'>" + this.state.content + "</html>"
+        var html = ""
+        if (Platform.OS == 'android') {
+            html = "<html>" + this.state.content + "</html>"
+        } else {
+            html = "<html style='font-size: 40px'>" + this.state.content + "</html>"
+        }
         return(
-            <WebView style={{flex: 1}} source={{html}} />
+            <WebView style={{flex: 1}} source={{html, baseUrl: '' }} />
         )
     }
 }

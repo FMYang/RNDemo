@@ -7,6 +7,9 @@
 
 import React, { Component } from 'react'
 import {StackNavigator, TabNavigator, TabBarBottom} from 'react-navigation';
+import { YellowBox } from 'react-native'
+YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader']);
+YellowBox.ignoreWarnings(['VirtualizedList: ', 'Module RCTImageLoader']);
 
 import Home from "./Home";
 import Detail from "./Detail";

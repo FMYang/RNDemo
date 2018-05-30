@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import NewsCell from "./NewsCell";
 
+// 定义状态
 type State = {
     data: Array<Object>,
 }
@@ -27,12 +28,13 @@ class Home extends PureComponent<State> {
     constructor(props: Object) {
         super(props)
 
+        // 初始化状态
         this.state = {
             data: [],
         }
     }
 
-    // 组件声明周期
+    // 组件声明周期，组件已经加载
     componentDidMount() {
         this.getList()
     }
@@ -70,6 +72,7 @@ class Home extends PureComponent<State> {
                 // 删除title为空的
                 this.dataList = this.dataList.filter(function(n){ return n.title != undefined && n.title.length != 0 })
 
+                // 改变状态
                 this.setState({
                     data: this.dataList
                 })
@@ -107,8 +110,8 @@ class Home extends PureComponent<State> {
         return (
             <View style={styles.container}>
                 <FlatList
+                    // 数据源绑定状态
                     data={this.state.data}
-                    // renderItem={({item}) => <Text style={styles.cell}>{item.title}</Text>}
                     renderItem = {this.newsCell}
                     ItemSeparatorComponent={this._separator}
                 />
