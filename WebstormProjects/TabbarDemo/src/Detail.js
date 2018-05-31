@@ -15,6 +15,7 @@ import {
     FlatList,
     Dimensions
 } from 'react-native';
+import AutoHeightWebView from 'react-native-autoheight-webview'
 
 type Props = {
     id: string
@@ -23,41 +24,11 @@ type Props = {
 type State = {
     data: Object,
     content: string,
-    height: number
+    height: number,
+    comments: Array<Object>
 }
 
-const BaseScript =
-    `
-    (function () {
-        var height = null;
-        function changeHeight() {
-          if (document.body.scrollHeight != height) {
-            height = document.body.scrollHeight;
-            if (window.postMessage) {
-              window.postMessage(JSON.stringify({
-                type: 'setHeight',
-                height: height,
-              }))
-            }
-          }
-        }
-        setInterval(changeHeight, 100);
-    } ())
-    `
-
 class Detail extends Component<Props, State> {
-
-    //web端发送过来的交互消息
-    onMessage(event) {
-        try {
-            const action = JSON.parse(event.nativeEvent.data)
-            if (action.type === 'setHeight' && action.height > 0) {
-                this.setState({ height: action.height })
-            }
-        } catch (error) {
-            // pass
-        }
-    }
 
     constructor(Props) {
         super(Props)
@@ -65,12 +36,15 @@ class Detail extends Component<Props, State> {
         this.state = {
             content: "",
             data: Object(),
-            height: 0
+            height: 0,
+            comments: []
         }
 
         let id = this.props.navigation.state.params.id
 
         this.getDetail(id)
+
+        this.getComments(id)
     }
 
     getDetail(id) {
@@ -88,7 +62,6 @@ class Detail extends Component<Props, State> {
         fetch(url, map)
             .then(response => response.json()) // 转成json
             .then(data => {
-                console.log(data.data.content)
                 this.setState({
                     content: data.data.content,
                     data: data.data
@@ -99,6 +72,37 @@ class Detail extends Component<Props, State> {
                     alert(error)
                 }
             )
+    }
+
+    getComments(id) {
+        // http://lf.snssdk.com/article/v2/tab_comments/?group_id=6535582244147298830
+        // &item_id=6535582244147298830&count=20
+        let url = "http://lf.snssdk.com/article/v2/tab_comments/?group_id=" +
+            id + "&item_id=" + id + "&count=20"
+        let map = {
+            method: 'GET'
+        }
+        let requestHeaders = {
+            'Content-Type': "application/x-www-form-urlencoded"
+        }
+        map.headers = requestHeaders
+        map.timeout = 30
+        map.size = 0
+        map.responseHeaders = {'Content-Type': "application/json"}
+        fetch(url, map)
+            .then(response => response.json()) // 转成json
+            .then(data => {
+                console.log(data.data)
+                this.setState({
+                    comments: data.data
+                })
+            })
+            .catch(
+                (error) => {
+                    alert(error)
+                }
+            )
+
     }
 
     render() {
@@ -113,7 +117,7 @@ class Detail extends Component<Props, State> {
         if (Platform.OS == 'android') {
             html = "<html>" + "<body style=letter-spacing:2px;word-spacing:5px;text-align:justify;overflow:hidden;margin:10px 10px;word-break:break-all>" + title + this.state.content +  "</body>" + "</html>"
         } else {
-            html = "<html>" + "<body style=font-size:40px;letter-spacing:2px;word-spacing:5px;text-align:justify;overflow:hidden;margin:10px 10px;word-break:break-all>" + title + this.state.content +  "</body>" + "</html>"
+            html = "<html>" + "<body style=font-size:18px;letter-spacing:2px;word-spacing:5px;text-align:justify;overflow:hidden;margin:10px 10px;word-break:break-all>" + title + this.state.content +  "</body>" + "</html>"
         }
 
         html = html.replace(new RegExp("<header>", "g"), '<h3>')
@@ -129,18 +133,16 @@ class Detail extends Component<Props, State> {
         html = html.replace(new RegExp("href", "g"), 'src')
 
         return(
-            <ScrollView style={{flex: 1}}>
-                <WebView
-                    style={{flex: 1, width: Dimensions.get('window').width, height: this.state.height}}
-                    injectedJavaScript={BaseScript}
-                    scrollEnabled={false}
+            <ScrollView>
+                <AutoHeightWebView
                     source={{html, baseUrl: '' }}
-                    onMessage={this.onMessage.bind(this)}
-                />
-                <Text style={{marginTop: 100}}>test</Text>
-                <FlatList style={{marginTop: 100}}
-                    data={[{"key": 1}, {"key": 2},{"key": 3}, {"key": 4}, {"key": 5}]}
-                    renderItem={({item}) => <Text>{item.key}</Text>}
+                    onHeightUpdated={height => this.setState({ height })}
+                >
+                </AutoHeightWebView>
+                <Text>评论列表</Text>
+                <FlatList
+                    data={this.state.comments}
+                    renderItem={({item}) => <Text style={{padding: 10}}>{item.comment.text}</Text>}
                 />
             </ScrollView>
         )
