@@ -64,7 +64,7 @@ class Home extends PureComponent<State> {
                     // 使用原生JSON库碰到问题（6559336542580506894变成6559336542580507000，导致文章id错误，获取详情失败）
                     // 详细问题见（https://stackoverflow.com/questions/18755125/node-js-is-there-any-proper-way-to-parse-json-with-large-numbers-long-bigint）
                     // 这里使用json-bigint（https://www.npmjs.com/package/json-bigint）来解决
-                    var JSONbig = require('json-bigint')
+                    let JSONbig = require('json-bigint')
                     let json = JSONbig.parse(info.content)
                     return json
                 })

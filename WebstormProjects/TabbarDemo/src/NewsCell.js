@@ -30,6 +30,7 @@ class NewsCell extends Component<Props> {
 
         let {content} = this.props
         if (content.image_list != undefined) {
+            // Object转数组
             let imageList = Object.values(content.image_list)
             let images = imageList.length
 
@@ -37,7 +38,7 @@ class NewsCell extends Component<Props> {
                 let url = imageList[0].url_list[0].url.replace('webp', 'jpg')
                 return(
                     <View>
-                        <TouchableOpacity onPress = {() => this.props.onPress(content)}>
+                        <TouchableOpacity activeOpacity={1} onPress = {() => this.props.onPress(content)}>
                             <View style={{flexDirection: 'row', flex: 1}}>
                                 <View>
                                     <Text style={styles.title1}> {content.title} </Text>
@@ -56,7 +57,7 @@ class NewsCell extends Component<Props> {
                 let url2 = imageList[1].url_list[1].url.replace('webp', 'jpg')
                 let url3 = imageList[2].url_list[2].url.replace('webp', 'jpg')
                 return(
-                    <TouchableOpacity onPress = {() => this.props.onPress(content)}>
+                    <TouchableOpacity activeOpacity={1} onPress = {() => this.props.onPress(content)}>
                         <Text style={styles.title}> {content.title} </Text>
                         <View style={styles.imageContainer}>
                             <Image style={styles.image} source={{uri: url1}}/>
@@ -71,7 +72,7 @@ class NewsCell extends Component<Props> {
                 )
             } else { // 无图
                 return(
-                    <TouchableOpacity onPress = {() => this.props.onPress(content)}>
+                    <TouchableOpacity activeOpacity={1} onPress = {() => this.props.onPress(content)}>
                         <Text style={styles.title}> {content.title} </Text>
                         <View style={styles.bottomView_noPic}>
                             <Text style={styles.source}>{content.source}</Text>
@@ -82,7 +83,7 @@ class NewsCell extends Component<Props> {
             }
         } else { // 无图
             return(
-                <TouchableOpacity onPress = {() => this.props.onPress(content)}>
+                <TouchableOpacity activeOpacity={1} onPress = {() => this.props.onPress(content)}>
                     <Text style={styles.title}> {content.title} </Text>
                     <View style={styles.bottomView_noPic}>
                         <Text style={styles.source}>{content.source}</Text>
