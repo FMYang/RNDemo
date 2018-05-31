@@ -12,7 +12,8 @@ import {
     WebView,
     Platform,
     ScrollView,
-    FlatList
+    FlatList,
+    Dimensions
 } from 'react-native';
 
 type Props = {
@@ -21,17 +22,50 @@ type Props = {
 
 type State = {
     data: Object,
-    content: string
+    content: string,
+    height: number
 }
 
+const BaseScript =
+    `
+    (function () {
+        var height = null;
+        function changeHeight() {
+          if (document.body.scrollHeight != height) {
+            height = document.body.scrollHeight;
+            if (window.postMessage) {
+              window.postMessage(JSON.stringify({
+                type: 'setHeight',
+                height: height,
+              }))
+            }
+          }
+        }
+        setInterval(changeHeight, 100);
+    } ())
+    `
+
 class Detail extends Component<Props, State> {
+
+    //web端发送过来的交互消息
+    onMessage(event) {
+        try {
+            const action = JSON.parse(event.nativeEvent.data)
+            if (action.type === 'setHeight' && action.height > 0) {
+                this.setState({ height: action.height })
+            }
+        } catch (error) {
+            // pass
+        }
+    }
 
     constructor(Props) {
         super(Props)
 
         this.state = {
             content: "",
-            data: Object()
+            data: Object(),
+            height: 0
         }
 
         let id = this.props.navigation.state.params.id
@@ -95,8 +129,14 @@ class Detail extends Component<Props, State> {
         html = html.replace(new RegExp("href", "g"), 'src')
 
         return(
-            <ScrollView>
-                <WebView style={{flex: 1, width:300, height:500}} scrollEnabled={false} source={{html, baseUrl: '' }} />
+            <ScrollView style={{flex: 1}}>
+                <WebView
+                    style={{flex: 1, width: Dimensions.get('window').width, height: this.state.height}}
+                    injectedJavaScript={BaseScript}
+                    scrollEnabled={false}
+                    source={{html, baseUrl: '' }}
+                    onMessage={this.onMessage.bind(this)}
+                />
                 <Text style={{marginTop: 100}}>test</Text>
                 <FlatList style={{marginTop: 100}}
                     data={[{"key": 1}, {"key": 2},{"key": 3}, {"key": 4}, {"key": 5}]}
