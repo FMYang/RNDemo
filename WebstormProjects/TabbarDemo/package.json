@@ -11,6 +11,7 @@
     "react": "16.3.1",
     "react-native": "0.55.4",
     "react-native-autoheight-webview": "^0.6.1",
+    "react-native-grid-component": "^1.1.0",
     "react-navigation": "^1.0.0-beta.22"
   },
   "devDependencies": {

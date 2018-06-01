@@ -16,16 +16,18 @@ import {
     Dimensions
 } from 'react-native';
 import AutoHeightWebView from 'react-native-autoheight-webview'
+import CommentCell from "./CommentCell";
+import RefreshListView, {RefreshState} from 'react-native-refresh-list-view'
 
 type Props = {
-    id: string
+    id: string,
 }
 
 type State = {
     data: Object,
-    content: string,
     height: number,
-    comments: Array<Object>
+    comments: Array<Object>,
+    refreshState: number
 }
 
 class Detail extends Component<Props, State> {
@@ -34,21 +36,28 @@ class Detail extends Component<Props, State> {
         super(Props)
 
         this.state = {
-            content: "",
             data: Object(),
             height: 0,
-            comments: []
+            comments: [],
+            refreshState: RefreshState.Idle
         }
-
-        let id = this.props.navigation.state.params.id
-
-        this.getDetail(id)
-
-        this.getComments(id)
     }
 
-    getDetail(id) {
-        let url = "http://a.pstatp.com/article/content/19/2/" + id + "/" + id + "/1/0"
+    componentDidMount() {
+        this.getDetail()
+    }
+
+    // 上拉刷新
+    onFooterRefresh = () => {
+
+        this.setState({refreshState: RefreshState.FooterRefreshing})
+
+        this.getComments(10)
+    }
+
+    getDetail() {
+        let id = this.props.navigation.state.params.id
+        let url = `http://a.pstatp.com/article/content/19/2/${id}/${id}/1/0`
         let map = {
             method: 'GET'
         }
@@ -63,9 +72,10 @@ class Detail extends Component<Props, State> {
             .then(response => response.json()) // 转成json
             .then(data => {
                 this.setState({
-                    content: data.data.content,
                     data: data.data
                 })
+
+                this.getComments(10)
             })
             .catch(
                 (error) => {
@@ -74,11 +84,13 @@ class Detail extends Component<Props, State> {
             )
     }
 
-    getComments(id) {
+    getComments(count) {
         // http://lf.snssdk.com/article/v2/tab_comments/?group_id=6535582244147298830
         // &item_id=6535582244147298830&count=20
-        let url = "http://lf.snssdk.com/article/v2/tab_comments/?group_id=" +
-            id + "&item_id=" + id + "&count=20"
+        var dataList = []
+        let id = this.props.navigation.state.params.id
+        let url = `http://lf.snssdk.com/article/v2/tab_comments/?group_id=${id}&item_id=${id}&count=${count}`
+        console.log(url)
         let map = {
             method: 'GET'
         }
@@ -92,9 +104,12 @@ class Detail extends Component<Props, State> {
         fetch(url, map)
             .then(response => response.json()) // 转成json
             .then(data => {
-                console.log(data.data)
+
+                dataList = this.state.comments.concat(data.data)
+
                 this.setState({
-                    comments: data.data
+                    comments: dataList,
+                    refreshState: data.data.length == 10 ? RefreshState.Idle: RefreshState.NoMoreData
                 })
             })
             .catch(
@@ -102,47 +117,47 @@ class Detail extends Component<Props, State> {
                     alert(error)
                 }
             )
-
     }
 
     render() {
         var html = ""
-        var title = ""
-        var data = this.state.data
+        let data = this.state.data
 
-        // if (data.h5_extra != undefined) {
-        //     title = "<h3 text-align:left;font-size:18;font-weight:bold;color:#333333;margin-bottom:5px>" + data.h5_extra.title + "</h3>"
-        // }
+        if (data.content != undefined) {
+            if (Platform.OS == 'android') {
+                html = "<html>" + "<body style=letter-spacing:2px;word-spacing:5px;text-align:justify;overflow:hidden;margin:10px 10px;word-break:break-all>"  + data.content +  "</body>" + "</html>"
+            } else {
+                html = "<html>" + "<body style=font-size:18px;letter-spacing:2px;word-spacing:5px;text-align:justify;overflow:hidden;margin:10px 10px;word-break:break-all>"  + data.content +  "</body>" + "</html>"
+            }
 
-        if (Platform.OS == 'android') {
-            html = "<html>" + "<body style=letter-spacing:2px;word-spacing:5px;text-align:justify;overflow:hidden;margin:10px 10px;word-break:break-all>" + title + this.state.content +  "</body>" + "</html>"
-        } else {
-            html = "<html>" + "<body style=font-size:18px;letter-spacing:2px;word-spacing:5px;text-align:justify;overflow:hidden;margin:10px 10px;word-break:break-all>" + title + this.state.content +  "</body>" + "</html>"
+            html = html.replace("<header>", '<h3>')
+            html = html.replace("</header>", '</h3>')
+
+            html = html.replace(new RegExp("><a class=\"image\"", "g"), " style=text-align:center><img style=width:100%;height:auto;")
+            html = html.replace(new RegExp("></a>", "g"), '>')
+            html = html.replace(new RegExp("bytedance://large_image", "g"), '')
+            html = html.replace(/\?url=/g, '')
+            html = html.replace(new RegExp("%3A", "g"), ':')
+            html = html.replace(new RegExp("%2F", "g"), '/')
+            html = html.replace(new RegExp("&index=[0-9]", "g"), '')
+            html = html.replace(new RegExp("href", "g"), 'src')
         }
-
-        html = html.replace(new RegExp("<header>", "g"), '<h3>')
-        html = html.replace(new RegExp("</header>", "g"), '</h3>')
-
-        html = html.replace(new RegExp("><a class=\"image\"", "g"), " style=text-align:center><img style=width:100%;height:auto;")
-        html = html.replace(new RegExp("></a>", "g"), '>')
-        html = html.replace(new RegExp("bytedance://large_image", "g"), '')
-        html = html.replace(/\?url=/g, '')
-        html = html.replace(new RegExp("%3A", "g"), ':')
-        html = html.replace(new RegExp("%2F", "g"), '/')
-        html = html.replace(new RegExp("&index=[0-9]", "g"), '')
-        html = html.replace(new RegExp("href", "g"), 'src')
 
         return(
             <ScrollView>
                 <AutoHeightWebView
-                    source={{html, baseUrl: '' }}
-                    onHeightUpdated={height => this.setState({ height })}
+                    source={{html, baseUrl: ''}}
+                    onHeightUpdated={height => this.setState({height})}
+                    // onLoadEnd={this.getComments()}
                 >
                 </AutoHeightWebView>
-                <Text>评论列表</Text>
-                <FlatList
+                <RefreshListView
                     data={this.state.comments}
-                    renderItem={({item}) => <Text style={{padding: 10}}>{item.comment.text}</Text>}
+                    // renderItem={({item}) => <Text style={{padding: 10}}>{item.comment.text}</Text>}
+                    renderItem={({item}) => <CommentCell comment={item}/> }
+                    refreshState={this.state.refreshState}
+                    // onHeaderRefresh={this.onHeaderRefresh}
+                    onFooterRefresh={this.onFooterRefresh}
                 />
             </ScrollView>
         )

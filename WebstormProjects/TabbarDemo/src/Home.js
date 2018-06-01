@@ -14,13 +14,15 @@ import {
     StyleSheet
 } from 'react-native';
 import NewsCell from "./NewsCell";
+import RefreshListView, {RefreshState} from 'react-native-refresh-list-view'
 
 // 定义状态
 type State = {
     data: Array<Object>,
+    refreshState: number
 }
 
-var dataList = Array()
+// var dataList = Array()
 
 class Home extends PureComponent<State> {
 
@@ -31,16 +33,32 @@ class Home extends PureComponent<State> {
         // 初始化状态
         this.state = {
             data: [],
+            refreshState: RefreshState.Idle
         }
     }
 
     // 组件声明周期，组件已经加载
     componentDidMount() {
+        this.onHeaderRefresh()
+    }
+
+    // 下拉刷新
+    onHeaderRefresh = ()=> {
+        this.setState({refreshState: RefreshState.HeaderRefreshing})
+
+        this.getList()
+    }
+
+    // 上拉刷新
+    onFooterRefresh = () => {
+        this.setState({refreshState: RefreshState.FooterRefreshing})
+
         this.getList()
     }
 
     // 网络请求
     getList() {
+        var dataList = []
         let url = "http://lf.snssdk.com/api/news/feed/v44/?category=news_sports&count=10&device_id=3755813419"
         let map = {
             method: 'GET'
@@ -58,7 +76,7 @@ class Home extends PureComponent<State> {
         fetch(url, map)
             .then(response => response.json()) // 转成json
             .then(data => {
-                this.dataList = data.data.map((info) => {
+                var resultArray = data.data.map((info) => {
                     console.log(info.content)
                     // 将content字符串转成json对象
                     // 使用原生JSON库碰到问题（6559336542580506894变成6559336542580507000，导致文章id错误，获取详情失败）
@@ -70,11 +88,18 @@ class Home extends PureComponent<State> {
                 })
 
                 // 删除title为空的
-                this.dataList = this.dataList.filter(function(n){ return n.title != undefined && n.title.length != 0 })
+                resultArray = resultArray.filter(function(n){ return n.title != undefined && n.title.length != 0 })
+
+                if (this.state.refreshState == RefreshState.HeaderRefreshing) {
+                    dataList = resultArray
+                } else {
+                    dataList = this.state.data.concat(resultArray)//resultArray//[this.state.data, resultArray]
+                }
 
                 // 改变状态
                 this.setState({
-                    data: this.dataList
+                    data: dataList,
+                    refreshState: RefreshState.Idle
                 })
             })
             .catch(
@@ -109,11 +134,14 @@ class Home extends PureComponent<State> {
     render() {
         return (
             <View style={styles.container}>
-                <FlatList
+                <RefreshListView
                     // 数据源绑定状态
                     data={this.state.data}
                     renderItem = {this.newsCell}
                     ItemSeparatorComponent={this._separator}
+                    refreshState={this.state.refreshState}
+                    onHeaderRefresh={this.onHeaderRefresh}
+                    onFooterRefresh={this.onFooterRefresh}
                 />
             </View>
         )
@@ -123,7 +151,7 @@ class Home extends PureComponent<State> {
 // 样式表
 const styles = StyleSheet.create({
     container: {
-        flex: 1
+        flex: 1,
     },
 })
 

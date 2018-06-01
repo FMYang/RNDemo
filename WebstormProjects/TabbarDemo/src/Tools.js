@@ -1,3 +1,5 @@
+import {Dimensions} from "react-native";
+
 /**
  * Created by yangfangming On 2018/5/28
  *
@@ -17,3 +19,6 @@ Array.prototype.remove = function(val) {
         this.splice(index, 1);
     }
 };
+
+export const screenWidth = Dimensions.get('window').width
+export const screenHeight = Dimensions.get('window').height
