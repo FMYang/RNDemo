@@ -77,7 +77,6 @@ class Home extends PureComponent<State> {
             .then(response => response.json()) // 转成json
             .then(data => {
                 var resultArray = data.data.map((info) => {
-                    console.log(info.content)
                     // 将content字符串转成json对象
                     // 使用原生JSON库碰到问题（6559336542580506894变成6559336542580507000，导致文章id错误，获取详情失败）
                     // 详细问题见（https://stackoverflow.com/questions/18755125/node-js-is-there-any-proper-way-to-parse-json-with-large-numbers-long-bigint）
@@ -99,7 +98,7 @@ class Home extends PureComponent<State> {
                 // 改变状态
                 this.setState({
                     data: dataList,
-                    refreshState: RefreshState.Idle
+                    refreshState: dataList.length > 0 ? RefreshState.Idle : RefreshState.NoMoreData
                 })
             })
             .catch(
@@ -116,7 +115,6 @@ class Home extends PureComponent<State> {
 
     // cell
     newsCell = (info: Object) => {
-        console.log(info)
         return(
             <NewsCell
                 content={info.item}

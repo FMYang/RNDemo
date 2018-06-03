@@ -17,6 +17,7 @@ import TabBarItem from "./TabBarItem";
 import WeiToutiao from "./WeiToutiao";
 import Video from "./Video";
 import Xigua from "./Xigua";
+import NewsDetail from "./NewsDetail";
 
 export const HomeStack = StackNavigator({
     Home: {
@@ -37,6 +38,13 @@ export const HomeStack = StackNavigator({
     },
     Detail: {
         screen: Detail,
+        navigationOptions: {
+            title: '',
+            tabBarVisible: false, // push的时候隐藏tabbar
+        }
+    },
+    NewsDetail: {
+        screen: NewsDetail,
         navigationOptions: {
             title: '',
             tabBarVisible: false, // push的时候隐藏tabbar
@@ -116,9 +124,17 @@ export const Tabs = TabNavigator(
             }
         },
         Video: {
-            screen: VideoStack,
+            screen: Video,
             navigationOptions: {
                 tabBarLabel: '小视频',
+                tabBarIcon:({focused, tintColor}) => (
+                    <TabBarItem
+                        tintColor={tintColor}
+                        focused={focused}
+                        normalImage={require('./img/tabbar/huoshan_tabbar.png')}
+                        selectedImage={require('./img/tabbar/huoshan_tabbar_press.png')}
+                    />
+                )
             }
         }
     },

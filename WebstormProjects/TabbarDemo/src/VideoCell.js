@@ -15,20 +15,22 @@ import {
 } from 'react-native'
 import {screenWidth} from "./Tools";
 
+const imageHeight = (screenWidth/2) * 291 / 185
+
 type Props = {
     info: Object
 }
 
-class VideoCell extends Component {
+class VideoCell extends Component<Props> {
     render() {
         let {info} = this.props
+        var url = info.raw_data.first_frame_image_list[0].url
         return(
-            <View style={{flex: 1, height: 160, margin: 1,}}>
-                <ImageBackground style={{flex:1, resizeMode: 'stretch'}} source={{uri: "http://p3.pstatp.com/video1609/pgc-image/1527563166366b91aeb8959"}}>
+            <View style={{flex: 1, height: imageHeight, margin: 1,}}>
+                <ImageBackground style={{flex:1}} source={{uri: url}}>
                     <View style={{justifyContent: 'flex-end',flex: 1}}>
-                        <View style={{marginBottom: 5}}>
-                            <Text style={sytles.title}> Test </Text>
-                            <Text> Test </Text>
+                        <View style={styles.titleContainer}>
+                            <Text style={styles.title} numberOfLines={2}> {info.raw_data.title} </Text>
                         </View>
                     </View>
                 </ImageBackground>
@@ -39,10 +41,14 @@ class VideoCell extends Component {
 
 export default VideoCell
 
-const sytles = StyleSheet.create({
+const styles = StyleSheet.create({
+    titleContainer: {
+        margin: 10,
+    },
     title: {
         color: 'white',
-        fontSize: 18,
-        marginLeft: 10
+        fontSize: 14,
+        textAlign: 'left',
+        fontWeight: 'bold',
     }
 })
