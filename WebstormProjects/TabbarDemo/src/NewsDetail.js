@@ -16,6 +16,7 @@ import {
     Dimensions
 } from 'react-native';
 import CommentCell from "./CommentCell";
+import AutoResizeHeightWebView from 'react-native-autoreheight-webview'
 
 type Props = {
     id: string,
@@ -139,22 +140,14 @@ class NewsDetail extends Component<Props, State> {
             html = html.replace(new RegExp("href", "g"), 'src')
         }
 
-        html = "<HTML>hello</HTML>>"
-
         return (
-            <ScrollView>
-            <WebView
+            <AutoResizeHeightWebView
             source={{html, baseUrl: ''}}
-            scrollEnabled={false}
-            // onMessage={this.onMessage.bind(this)}
-            // injectedJavaScript={BaseScript}
             onLoadEnd={this.onLoadEnd}
-            automaticallyAdjustContentInsets={true}
+            defaultHeight={Dimensions.get('window').height}
             sytle={{
                 width: Dimensions.get('window').width,
-                height: 1000//this.state.height
             }} />
-            </ScrollView>
         )
     }
 
@@ -184,7 +177,10 @@ class NewsDetail extends Component<Props, State> {
         }
 
         return(
-            // <ScrollView style={{flex: 1}}>
+            <ScrollView>
+                {this.header()}
+            </ScrollView>
+        // <ScrollView style={{flex: 1}}>
 
             /*
             <FlatList
@@ -195,12 +191,11 @@ class NewsDetail extends Component<Props, State> {
             */
 
 
+
+            /*
                 <WebView
                     source={{html, baseUrl: ''}}
                     scrollEnabled={true}
-                    onMessage={this.onMessage.bind(this)}
-                    injectedJavaScript={BaseScript}
-                    // onLoadEnd={this.onLoadEnd}
                     automaticallyAdjustContentInsets={true}
                     onError={() => console.log('on error')}
                     onLoad={() => console.log('on load')}
@@ -211,6 +206,7 @@ class NewsDetail extends Component<Props, State> {
                         height: this.state.height
                     }}
                 />
+                */
 
 
 //            </ScrollView>

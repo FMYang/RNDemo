@@ -11,6 +11,7 @@
     "react": "16.3.1",
     "react-native": "0.55.4",
     "react-native-autoheight-webview": "^0.6.1",
+    "react-native-autoreheight-webview": "^1.1.1",
     "react-native-grid-component": "^1.1.0",
     "react-navigation": "^1.0.0-beta.22"
   },
@@ -19,8 +20,8 @@
     "babel-preset-react-native": "4.0.0",
     "jest": "22.4.4",
     "react-native-clean-project": "^2.0.0",
-    "react-test-renderer": "16.3.1",
-    "react-native-refresh-list-view": "^1.0.8"
+    "react-native-refresh-list-view": "^1.0.8",
+    "react-test-renderer": "16.3.1"
   },
   "jest": {
     "preset": "react-native"

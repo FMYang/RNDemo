@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import NewsCell from "./NewsCell";
 import RefreshListView, {RefreshState} from 'react-native-refresh-list-view'
+import NewsDetail from "./NewsDetail";
 
 // 定义状态
 type State = {

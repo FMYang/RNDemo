@@ -17,7 +17,15 @@ import {
 } from 'react-native';
 import AutoHeightWebView from 'react-native-autoheight-webview'
 import CommentCell from "./CommentCell";
-import RefreshListView, {RefreshState} from 'react-native-refresh-list-view'
+
+export const RefreshState = {
+    Idle: 0,
+    HeaderRefreshing: 1,
+    FooterRefreshing: 2,
+    NoMoreData: 3,
+    Failure: 4,
+    EmptyData: 5,
+}
 
 type Props = {
     id: string,
@@ -25,14 +33,35 @@ type Props = {
 
 var count = 10
 var offset = 0
+var preHeight = 0
 
 type State = {
     data: Object,
     height: number,
     comments: Array<Object>,
-    refreshState: number,
-    webViewLoadFinish: boolean
+    refreshState: RefreshState,
+    webViewLoadEnd: boolean
 }
+
+const BaseScript =
+    `
+    (function () {
+        var height = null;
+        function changeHeight() {
+        console.log(document.body)
+          if (document.body.scrollHeight != height) {
+            height = document.body.scrollHeight;
+            if (window.postMessage) {
+              window.postMessage(JSON.stringify({
+                type: 'setHeight',
+                height: height,
+              }))
+            }
+          }
+        }
+        setInterval(changeHeight, 100);
+    } ())
+    `
 
 class Detail extends Component<Props, State> {
 
@@ -44,26 +73,31 @@ class Detail extends Component<Props, State> {
             webHeight: 0,
             comments: [],
             refreshState: RefreshState.Idle,
-            webViewLoadFinish: false
+            webViewLoadEnd: false
         }
     }
 
     componentDidMount() {
+        console.log('componentDidMount')
         this.getDetail()
         offset = 0
     }
 
     // 上拉刷新
     onFooterRefresh = () => {
-
-        this.setState({refreshState: RefreshState.FooterRefreshing})
-
-        this.getComments()
+        if (this.state.refreshState != RefreshState.NoMoreData) {
+            console.log('加载更多')
+            this.setState({refreshState: RefreshState.FooterRefreshing})
+            setTimeout(function () {
+                this.getComments()
+            }.bind(this), 500)
+        }
     }
 
     getDetail() {
         let id = this.props.navigation.state.params.id
         let url = `http://a.pstatp.com/article/content/19/2/${id}/${id}/1/0`
+        console.log(url)
         let map = {
             method: 'GET'
         }
@@ -80,8 +114,6 @@ class Detail extends Component<Props, State> {
                 this.setState({
                     data: data.data
                 })
-
-                // this.getComments()
             })
             .catch(
                 (error) => {
@@ -118,7 +150,6 @@ class Detail extends Component<Props, State> {
                 this.setState({
                     comments: dataList,
                     refreshState: data.data.length > 0 ? RefreshState.Idle: RefreshState.NoMoreData,
-                    webViewLoadFinish: true
                 })
             })
             .catch(
@@ -128,22 +159,14 @@ class Detail extends Component<Props, State> {
             )
     }
 
-    onLoadEnd = () => {
-        console.log(`onLoadEnd  height: ${this.state.webHeight}`)
-
-        // if (this.state.webHeight > 0) {
-            this.getComments()
-
-            this.forceUpdate()
+    onLoad = () => {
+        console.log(`onLoadEnd  height: ${this.state.height}`)
+        // if (this.state.height != undefined) {
+        //     this.getComments()
         // }
-    }
-
-    renderList = () => {
-        // alert('renderList')
-        return <FlatList
-            data={[{'key': "1", 'key': "12", 'key': "13"}]}
-            renderItem={({item}) => <Text>{item.key}</Text>}
-        />
+        setTimeout(function () {
+            this.getComments()
+        }.bind(this), 2000)
     }
 
     _onScroll = (event) => {
@@ -154,9 +177,29 @@ class Detail extends Component<Props, State> {
         console.log('offsetY-->' + y);
         console.log('height-->' + height);
         console.log('contentHeight-->' + contentHeight);
+        if (y+height > contentHeight-40) {
+            this.onFooterRefresh()
+        }
     }
 
-    render() {
+    /**
+     * web端发送过来的交互消息
+     */
+    onMessage (event) {
+        try {
+            const action = JSON.parse(event.nativeEvent.data)
+            console.log('onMessage ' + action.height)
+            if (action.type === 'setHeight' && action.height > 0 && action.height < 10000) {
+                this.setState({ height: action.height })
+                preHeight = action.height
+            }
+        } catch (error) {
+            // pass
+            alert(error)
+        }
+    }
+
+    renderWeb = () => {
         var html = ""
         let data = this.state.data
 
@@ -180,6 +223,28 @@ class Detail extends Component<Props, State> {
             html = html.replace(new RegExp("href", "g"), 'src')
         }
 
+       return <AutoHeightWebView
+                     source={{html, baseUrl: ''}}
+                     onHeightUpdated={height => this.setState({height})}
+                     onLoad={this.onLoad}
+                     scrollEnabled={false}
+                     enableBaseUrl={true}
+                     sytle={{
+                         width: Dimensions.get('window').width,
+                         // height: this.state.height
+                     }}
+            >
+            </AutoHeightWebView>
+    }
+
+    renderComments() {
+        return <FlatList
+            data={this.state.comments}
+            renderItem={({item}) => <CommentCell comment={item}/> }
+        />
+    }
+
+    render() {
         return(
             <ScrollView
                 onContentSizeChange = {()=>console.log("onContentSizeChange")}
@@ -187,22 +252,11 @@ class Detail extends Component<Props, State> {
                 onScroll={this._onScroll}
                 onEndReachedThreshold={0.1}
             >
-                {this.state.webViewLoadFinish ? <Text> xxx-true </Text> : <Text> xxx-false </Text> }
 
-                <AutoHeightWebView
-                    source={{html, baseUrl: ''}}
-                    onHeightUpdated={height => this.setState({height})}
-                    onLoadEnd={this.onLoadEnd}
-                >
-                </AutoHeightWebView>
-                <FlatList
-                    data={this.state.comments}
-                    renderItem={({item}) => <CommentCell comment={item}/> }
-                    // refreshState={this.state.refreshState}
-                    // onFooterRefresh={this.onFooterRefresh}
-
-                />
+                {this.renderWeb()}
+                {this.renderComments()}
             </ScrollView>
+
         )
     }
 }
