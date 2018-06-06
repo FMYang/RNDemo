@@ -4201,6 +4201,12 @@ react-native-grid-component@^1.1.0:
   dependencies:
     prop-types "^15.5.10"
 
+react-native-linear-gradient@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/react-native-linear-gradient/-/react-native-linear-gradient-2.4.0.tgz#51d8ea12bb72a59bede9edc87b694b16b64cf435"
+  dependencies:
+    prop-types "^15.5.10"
+
 react-native-refresh-list-view@^1.0.8:
   version "1.0.8"
   resolved "https://registry.yarnpkg.com/react-native-refresh-list-view/-/react-native-refresh-list-view-1.0.8.tgz#d16935ca5135ba85e3b52e72ff98b19bb4adb046"

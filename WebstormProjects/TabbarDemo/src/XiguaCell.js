@@ -15,10 +15,13 @@ import {
     Dimensions
 } from 'react-native'
 import {screenWidth} from "./Tools";
+import LinearGradient from 'react-native-linear-gradient' //渐变view
 
 type Props = {
     info: Object
 }
+
+let imageHeight = screenWidth * 210 / 375
 
 class XiguaCell extends Component<Props> {
     render() {
@@ -26,11 +29,13 @@ class XiguaCell extends Component<Props> {
         console.log(info)
         return(
             <View style={styles.container}>
-                <ImageBackground style={styles.backgroundImage} source={{uri: info.}}>
-                    <Text>{info.title}</Text>
+                <ImageBackground style={styles.backgroundImage} source={{uri: info.video_detail_info.detail_video_large_image.url}}>
+                    <LinearGradient style={styles.titleView} colors={['black', 'white']}>
+                        <Text style={styles.title}>{info.title}</Text>
+                    </LinearGradient>
                 </ImageBackground>
                 <View>
-                    <Text>bottom view</Text>
+                    <Text style={styles.bottomView}>bottom view</Text>
                 </View>
             </View>
         )
@@ -45,8 +50,15 @@ const styles = StyleSheet.create({
     },
     backgroundImage: {
         width: screenWidth,
-        height: 150,
+        height: imageHeight,
         color: 'red'
+    },
+    title: {
+        marginLeft: 15,
+        marginRight: 15,
+        marginTop: 10,
+        color: 'white',
+        fontSize: 16
     },
     bottomView: {
         width: screenWidth,

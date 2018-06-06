@@ -5,7 +5,7 @@
  * All rights reserved.
  */
 
-// https://lf.snssdk.com/api/news/feed/v64/
+// https://lf.snssdk.com/api/news/feed/v64/?category=video
 
 import React, { Component } from 'react'
 import {
@@ -53,7 +53,7 @@ class Xigua extends Component {
     // 网络请求
     getList() {
         var dataList = []
-        let url = "https://lf.snssdk.com/api/news/feed/v64/"
+        let url = "https://lf.snssdk.com/api/news/feed/v64/?category=video"
         let map = {
             method: 'GET'
         }
