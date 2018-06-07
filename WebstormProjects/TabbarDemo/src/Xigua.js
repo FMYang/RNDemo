@@ -64,8 +64,7 @@ class Xigua extends Component {
         map.timeout = 30
         map.size = 0
         map.responseHeaders = {
-            'Content-Type': "application/json",
-            'cookie': "odin_tt=d9e677cbf53f8595e72590da191bdc0a42bcdebc124c48eca0bfc1a7582d6d6c0f6233cfa49a439c60c0632c9c213132"
+            'Content-Type': "application/json"
         }
         map.cookie =
             fetch(url, map)
@@ -84,13 +83,13 @@ class Xigua extends Component {
                     if (this.state.refreshState == RefreshState.HeaderRefreshing) {
                         dataList = resultArray
                     } else {
-                        dataList = this.state.data.concat(resultArray)//resultArray//[this.state.data, resultArray]
+                        dataList = this.state.data.concat(resultArray)
                     }
 
                     // 改变状态
                     this.setState({
                         data: dataList,
-                        refreshState: dataList.length > 0 ? RefreshState.Idle : RefreshState.NoMoreData
+                        refreshState: resultArray.length > 0 ? RefreshState.Idle : RefreshState.NoMoreData
                     })
                 })
                 .catch(

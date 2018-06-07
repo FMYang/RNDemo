@@ -57,7 +57,6 @@ class Video extends Component {
         fetch(url, map)
             .then(response => response.json()) // 转成json
             .then(data => {
-                console.log(data)
                 this.setState({isRefresh: false})
                 var result = data.data.map((info) => {
                     let JSONbig = require('json-bigint')

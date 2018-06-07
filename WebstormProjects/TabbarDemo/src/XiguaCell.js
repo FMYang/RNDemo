@@ -31,7 +31,7 @@ class XiguaCell extends Component<Props> {
         return(
             <View style={styles.container}>
                 <ImageBackground style={styles.backgroundImage} source={{uri: info.video_detail_info.detail_video_large_image.url}}>
-                    <LinearGradient style={styles.titleView} colors={['black', 'transparent']}>
+                    <LinearGradient colors={['black', 'transparent']}>
                         <Text style={styles.title}>{info.title}</Text>
                     </LinearGradient>
                 </ImageBackground>
@@ -60,9 +60,6 @@ const styles = StyleSheet.create({
         marginTop: 10,
         color: 'white',
         fontSize: 16
-    },
-    titleView: {
-
     },
     bottomView: {
         width: screenWidth,
