@@ -14,7 +14,10 @@ import {
     TouchableOpacity,
 } from 'react-native';
 import RefreshListView, {RefreshState} from 'react-native-refresh-list-view'
-import WeitoutiaoCell from "./WeitoutiaoCell";
+import WeitoutiaoForwardCell from "./WeitoutiaoForwardCell";
+import WeitoutiaoHotCell from "./WeitoutiaoHotCell";
+import WeitoutiaoPicCell from "./WeitoutiaoPicCell";
+import {screenWidth} from "./Tools";
 
 class WeiToutiao extends Component {
 
@@ -64,19 +67,21 @@ class WeiToutiao extends Component {
             fetch(url, map)
                 .then(response => response.json()) // 转成json
                 .then(data => {
-                    console.log(data)
+                    console.log("微头条====", data)
                     var resultArray = data.data.map((info) => {
                         // 将content字符串转成json对象
                         // 使用原生JSON库碰到问题（6559336542580506894变成6559336542580507000，导致文章id错误，获取详情失败）
                         // 详细问题见（https://stackoverflow.com/questions/18755125/node-js-is-there-any-proper-way-to-parse-json-with-large-numbers-long-bigint）
                         // 这里使用json-bigint（https://www.npmjs.com/package/json-bigint）来解决
                         let JSONbig = require('json-bigint')
-                        let json = JSONbig.parse(info.content)
-                        return json
+                        if (info.content != undefined) {
+                            let json = JSONbig.parse(info.content)
+                            return json
+                        }
                     })
 
                     if (this.state.refreshState == RefreshState.HeaderRefreshing) {
-                        dataList = resultArray
+                        dataList = resultArray.length > 0 ? resultArray : []
                     } else {
                         dataList = this.state.data.concat(resultArray)//resultArray//[this.state.data, resultArray]
                     }
@@ -89,15 +94,80 @@ class WeiToutiao extends Component {
                 })
                 .catch(
                     (error) => {
+                        console.log(error.data)
                         alert(error)
                     }
                 )
     }
 
+    getHeight() {
+
+    }
+
     renderCell = (info) => {
-        return (
-            <WeitoutiaoCell info={info}/>
-        )
+        var numColumns = 0
+        var imageHeight = 0
+        var imageWidth = 0
+        var key = "key"
+
+
+        let object = info.item
+        if (object != undefined) {
+            if (object.cell_type == 73) {
+                return (
+                    <WeitoutiaoHotCell/>
+                )
+            } else if (object.cell_type == 56) {
+                return (
+                    <WeitoutiaoForwardCell/>
+                )
+            }
+            else {
+                if (object.thumb_image_list != undefined) {
+                    let images = Object.values(object.thumb_image_list)
+                    let count = images.length
+
+                    switch (count) {
+                        case 1:
+                            numColumns = 1
+                            imageWidth = screenWidth
+                            imageHeight = 200
+                            key="pic1"
+                            break
+                        case 2:
+                        case 4:
+                            numColumns = 2
+                            imageWidth = (screenWidth-10)/2
+                            imageHeight = imageWidth
+                            key="pic2"
+                            break
+                        case 3:
+                        case 5:
+                        case 7:
+                        case 8:
+                        case 9:
+                            numColumns = 3
+                            imageWidth = (screenWidth-10) / 3
+                            imageHeight = imageWidth
+                            key="pic3"
+                            break
+                        default:
+                            numColumns = 0
+                            key="pic4"
+                            break
+                    }
+
+                    return(
+                        <WeitoutiaoPicCell info={object} numColumns={numColumns} picHeight={imageHeight} picWidth={imageWidth} key={key}/>
+                    )
+                } else {
+                    return (
+                        <Text>no pic</Text>
+                    )
+                }
+            }
+        }
+
     }
 
     render() {
