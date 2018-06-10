@@ -20,10 +20,10 @@ class WeitoutiaoHotCell extends Component {
         return(
             <View>
                 <Text> 热榜 </Text>
-                <FlatList
-                    data={[{"key": 1}, {"key": 11}, {"key": 111}, {"key": 1111}]}
-                    renderItem={({item}) => <Text>{item.key}</Text>}
-                />
+                {/*<FlatList*/}
+                    {/*data={[{"key": 1}, {"key": 11}, {"key": 111}, {"key": 1111}]}*/}
+                    {/*renderItem={({item}) => <Text>{item.key}</Text>}*/}
+                {/*/>*/}
             </View>
         )
     }

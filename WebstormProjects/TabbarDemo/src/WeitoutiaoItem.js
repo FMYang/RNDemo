@@ -31,7 +31,7 @@ export default class WeitoutiaoItem extends Component<Props> {
 
     render() {
         return(
-            <View style={{flex: 1}}>
+            <View>
                 <Image source={{uri: this.props.url}} style={{width: this.props.width, height: this.props.height, margin: 1}}/>
             </View>
         )

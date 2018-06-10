@@ -20,8 +20,8 @@ class WeitoutiaoForwardCell extends Component {
     render() {
         return(
             <View>
-                <Text> title </Text>
-                <WeitoutiaoPicCell/>
+                <Text> 转发类型 </Text>
+                {/*<WeitoutiaoPicCell/>*/}
             </View>
         )
     }

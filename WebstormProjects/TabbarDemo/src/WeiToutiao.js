@@ -94,6 +94,7 @@ class WeiToutiao extends Component {
                 })
                 .catch(
                     (error) => {
+                        this.setState({refreshState: RefreshState.Idle})
                         console.log(error.data)
                         alert(error)
                     }
@@ -108,8 +109,6 @@ class WeiToutiao extends Component {
         var numColumns = 0
         var imageHeight = 0
         var imageWidth = 0
-        var key = "key"
-
 
         let object = info.item
         if (object != undefined) {
@@ -121,25 +120,22 @@ class WeiToutiao extends Component {
                 return (
                     <WeitoutiaoForwardCell/>
                 )
-            }
-            else {
-                if (object.thumb_image_list != undefined) {
-                    let images = Object.values(object.thumb_image_list)
+            } else {
+                if (object.ugc_cut_image_list != undefined) {
+                    let images = Object.values(object.ugc_cut_image_list)
                     let count = images.length
 
                     switch (count) {
                         case 1:
                             numColumns = 1
                             imageWidth = screenWidth
-                            imageHeight = 200
-                            key="pic1"
+                            imageHeight = imageWidth
                             break
                         case 2:
                         case 4:
                             numColumns = 2
                             imageWidth = (screenWidth-10)/2
                             imageHeight = imageWidth
-                            key="pic2"
                             break
                         case 3:
                         case 5:
@@ -149,16 +145,14 @@ class WeiToutiao extends Component {
                             numColumns = 3
                             imageWidth = (screenWidth-10) / 3
                             imageHeight = imageWidth
-                            key="pic3"
                             break
                         default:
-                            numColumns = 0
-                            key="pic4"
+                            numColumns = 3
                             break
                     }
 
                     return(
-                        <WeitoutiaoPicCell info={object} numColumns={numColumns} picHeight={imageHeight} picWidth={imageWidth} key={key}/>
+                        <WeitoutiaoPicCell info={object} numColumns={numColumns} picHeight={imageHeight} picWidth={imageWidth}/>
                     )
                 } else {
                     return (

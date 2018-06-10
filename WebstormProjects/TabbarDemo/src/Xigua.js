@@ -95,6 +95,9 @@ class Xigua extends Component {
                 .catch(
                     (error) => {
                         alert(error)
+                        this.setState({
+                            refreshState: RefreshState.Idle
+                        })
                     }
                 )
     }
