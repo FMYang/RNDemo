@@ -49,6 +49,22 @@ class WeiToutiao extends Component {
 
     // 网络请求
     getList() {
+        // 假数据
+        // setTimeout(
+        //     function () {
+        //         var data = require('./toutiaoJson.json');
+        //         var resultArray = data.data.map((info) => {
+        //             return info.content
+        //         })
+        //
+        //         this.setState({
+        //             data: resultArray,
+        //             refreshState: RefreshState.Idle
+        //         })
+        //     }.bind(this),
+        //     1000
+        // )
+
         var dataList = []
         let url = "https://lh.snssdk.com/api/news/feed/v80/?category=weitoutiao"
         let map = {
@@ -101,10 +117,6 @@ class WeiToutiao extends Component {
                 )
     }
 
-    getHeight() {
-
-    }
-
     renderCell = (info) => {
         var numColumns = 0
         var imageHeight = 0
@@ -113,13 +125,66 @@ class WeiToutiao extends Component {
         let object = info.item
         if (object != undefined) {
             if (object.cell_type == 73) {
-                return (
-                    <WeitoutiaoHotCell/>
-                )
+                if (object.raw_data != undefined) {
+                    let dataList = object.raw_data
+                    return (
+                        <WeitoutiaoHotCell data={dataList}/>
+                    )
+                } else {
+                    return (
+                        <Text></Text>
+                    )
+                }
             } else if (object.cell_type == 56) {
-                return (
-                    <WeitoutiaoForwardCell/>
-                )
+                console.log(object.cell_type)
+                console.log(object)
+                var images = []
+                var count = 0
+                if (object.raw_data != undefined) {
+                    if (object.raw_data.comment_type == 211) {
+                        // if (object.ugc_cut_image_list != undefined) {
+                            images = Object.values(object.raw_data.origin_common_content.cover_image.url_list)
+                            count = images.length
+                        // }
+                    } else if (object.raw_data.comment_type == 212) {
+                        images = Object.values(object.raw_data.origin_thread.ugc_cut_image_list)
+                        count = images.length
+                    }
+
+                    switch (count) {
+                        case 1:
+                            numColumns = 1
+                            imageWidth = screenWidth
+                            imageHeight = imageWidth
+                            break
+                        case 2:
+                        case 4:
+                            numColumns = 2
+                            imageWidth = (screenWidth-26)/2
+                            imageHeight = imageWidth
+                            break
+                        case 3:
+                        case 5:
+                        case 7:
+                        case 8:
+                        case 9:
+                            numColumns = 3
+                            imageWidth = (screenWidth-26) / 3
+                            imageHeight = imageWidth
+                            break
+                        default:
+                            numColumns = 3
+                            break
+                    }
+                    return (
+                        <WeitoutiaoForwardCell info={object} numColumns={numColumns} picHeight={imageHeight} picWidth={imageWidth}/>
+                    )
+                } else {
+                    return (
+                        <Text></Text>
+                    )
+                }
+
             } else {
                 if (object.ugc_cut_image_list != undefined) {
                     let images = Object.values(object.ugc_cut_image_list)
@@ -156,7 +221,7 @@ class WeiToutiao extends Component {
                     )
                 } else {
                     return (
-                        <Text>no pic</Text>
+                        <Text></Text>
                     )
                 }
             }
@@ -166,7 +231,7 @@ class WeiToutiao extends Component {
 
     render() {
         return (
-            <RefreshListView
+            <RefreshListView style={{backgroundColor: '#f4f5f6'}}
                 data={this.state.data}
                 renderItem={this.renderCell}
                 refreshState={this.state.refreshState}

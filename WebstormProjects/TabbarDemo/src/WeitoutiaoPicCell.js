@@ -36,6 +36,32 @@ class WeitoutiaoPicCell extends Component<Props, State> {
         super()
     }
 
+    renderBottomView = () => {
+        let info = this.props.info
+        return (
+            <View style={styles.bottomView}>
+                <View>
+                    <View style={styles.bottomSubView}>
+                        <Image source={require('./img/resouces/feed_share.png')} style={styles.bottomImage}></Image>
+                        <Text> {info.forward_info.forward_count} </Text>
+                    </View>
+                </View>
+                <View>
+                    <View style={styles.bottomSubView}>
+                        <Image source={require('./img/resouces/comment_feed.png')} style={styles.bottomImage}></Image>
+                        <Text> {info.comment_count} </Text>
+                    </View>
+                </View>
+                <View>
+                    <View style={styles.bottomSubView}>
+                        <Image source={require('./img/resouces/feed_like.png')} style={styles.bottomImage}></Image>
+                        <Text> {info.digg_count} </Text>
+                    </View>
+                </View>
+            </View>
+        )
+    }
+
     renderUser = () => {
         let info = this.props.info
         return (
@@ -63,7 +89,7 @@ class WeitoutiaoPicCell extends Component<Props, State> {
             )
         }
         else {
-            return <Text></Text>
+            return <Text style={{height: 0, margin: 0}}></Text>
         }
     }
 
@@ -73,7 +99,7 @@ class WeitoutiaoPicCell extends Component<Props, State> {
             return <WeitoutiaoItem width={this.props.picWidth} height={this.props.picHeight} url={url}/>
         }
         else {
-            return <Text></Text>
+            return <Text style={{height: 0, margin: 0}}></Text>
         }
     }
 
@@ -95,7 +121,6 @@ class WeitoutiaoPicCell extends Component<Props, State> {
                 break
 
         }
-        console.log("renderPics" + this.props.numColumns)
         if (info != undefined && info.ugc_cut_image_list != undefined && info.ugc_cut_image_list.length > 0) {
             let images = info.ugc_cut_image_list
             return (
@@ -107,8 +132,14 @@ class WeitoutiaoPicCell extends Component<Props, State> {
                 />
             )
         } else {
-            return <Text>undefined</Text>
+            return <Text style={{height: 0, margin: 0}}></Text>
         }
+    }
+
+    renderSpaceView = () => {
+        return (
+            <View style={{width: screenWidth, height:10, backgroundColor: '#f4f5f6'}}></View>
+        )
     }
 
     render() {
@@ -118,7 +149,8 @@ class WeitoutiaoPicCell extends Component<Props, State> {
                 {this.renderUser()}
                 {this.renderTitle()}
                 {this.renderPics()}
-                <View style={{width: screenWidth, height:10, backgroundColor: '#e6e6e6'}}></View>
+                {this.renderBottomView()}
+                {this.renderSpaceView()}
             </View>
         )
     }
@@ -150,5 +182,22 @@ const styles = StyleSheet.create({
     desc: {
         marginTop: 10,
         marginRight: 100,
+    },
+    bottomView: {
+        width: screenWidth,
+        height: 45,
+        backgroundColor: 'white',
+        flexDirection: 'row'
+    },
+    bottomSubView: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'row',
+        width: screenWidth/3,
+        flex: 1
+    },
+    bottomImage: {
+        width: 24,
+        height: 24
     }
 })

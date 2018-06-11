@@ -13,20 +13,62 @@ import {
     StyleSheet,
     FlatList
 } from 'react-native'
+import WeitoutiaoHotItem from "./WeitoutiaoHotItem";
 import {screenWidth} from "./Tools";
 
-class WeitoutiaoHotCell extends Component {
+type Props = {
+    data: Array<Object>
+}
+
+class WeitoutiaoHotCell extends Component<Props> {
+
+    renderItem = (info) => {
+        return <WeitoutiaoHotItem info={info.item}/>
+    }
+
+    renderSpaceView = () => {
+        return (
+            <View style={styles.spaceView}></View>
+        )
+    }
+
     render() {
+        let data = this.props.data.forum_list
         return(
-            <View>
-                <Text> 热榜 </Text>
-                {/*<FlatList*/}
-                    {/*data={[{"key": 1}, {"key": 11}, {"key": 111}, {"key": 1111}]}*/}
-                    {/*renderItem={({item}) => <Text>{item.key}</Text>}*/}
-                {/*/>*/}
+            <View style={{backgroundColor: 'white'}}>
+                <View style={{flexDirection: 'row', alignItems: 'center', height: 40}}>
+                    <Image source={require('./img/resouces/热榜.png')} style={styles.headerView}/>
+                    <Text style={styles.text}> 热榜 </Text>
+                </View>
+                <FlatList
+                    data={data}
+                    renderItem={this.renderItem}
+                    numColumns={2}
+                />
+                {this.renderSpaceView()}
             </View>
         )
     }
 }
 
 export default WeitoutiaoHotCell
+
+const styles = StyleSheet.create({
+    headerView: {
+        margin: 10,
+        marginLeft: 10,
+        marginBottom: 10,
+        // marginRight: 10,
+        marginTop: 10,
+        width: 15,
+        height: 15
+    },
+    text: {
+        marginLeft: -10
+    },
+    spaceView: {
+        width: screenWidth,
+        height:10,
+        backgroundColor: '#f4f5f6'
+    }
+})
