@@ -32,21 +32,19 @@ class Xigua extends Component {
 
     // 组件声明周期，组件已经加载
     componentDidMount() {
-        this.getList()
+        // this.getList()
         this.onHeaderRefresh()
     }
 
     // 下拉刷新
     onHeaderRefresh = ()=> {
         this.setState({refreshState: RefreshState.HeaderRefreshing})
-
         this.getList()
     }
 
     // 上拉刷新
     onFooterRefresh = () => {
         this.setState({refreshState: RefreshState.FooterRefreshing})
-
         this.getList()
     }
 

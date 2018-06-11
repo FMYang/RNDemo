@@ -11,18 +11,18 @@ import {
     View,
     TouchableOpacity,
     ScrollView,
-    RefreshControl
+    RefreshControl,
+    FlatList
 } from 'react-native';
-import {RefreshState} from "react-native-refresh-list-view";
-import Grid from 'react-native-grid-component';
+// import Grid from 'react-native-grid-component';
 import VideoCell from "./VideoCell";
+import RefreshListView, {RefreshState} from 'react-native-refresh-list-view'
 
 class Video extends Component {
 
     state = {
         data: [],
-        isRefreshing: false,
-        isFooterRefresh: false
+        refreshState: RefreshState.Idle
     }
 
     componentDidMount() {
@@ -31,12 +31,12 @@ class Video extends Component {
     }
 
     onHeaderRefresh = () => {
-        this.setState({isRefresh: true})
+        this.setState({refreshState: RefreshState.HeaderRefreshing})
         this.getVideos()
     }
 
     onFooterRefresh = () => {
-        this.setState({isFooterRefresh: true})
+        this.setState({refreshState: RefreshState.FooterRefreshing})
         this.getVideos()
     }
 
@@ -57,28 +57,29 @@ class Video extends Component {
         fetch(url, map)
             .then(response => response.json()) // 转成json
             .then(data => {
-                this.setState({isRefresh: false})
                 var result = data.data.map((info) => {
                     let JSONbig = require('json-bigint')
                     let json = JSONbig.parse(info.content)
                     return json
                 })
 
-                if (this.state.isFooterRefresh) {
-                    dataList = this.state.data.concat(result)
-                } else {
+                if (this.state.refreshState == RefreshState.HeaderRefreshing) {
                     dataList = result
+                } else {
+                    dataList = this.state.data.concat(result)
                 }
 
                 this.setState({
                     data: dataList,
-                    isRefresh: false,
-                    isFooterRefresh: false
+                    refreshState: result.length > 0 ? RefreshState.Idle : RefreshState.NoMoreData
                 })
             })
             .catch(
                 (error) => {
                     alert(error)
+                    this.setState({
+                        refreshState: RefreshState.Idle
+                    })
                 }
             )
     }
@@ -86,22 +87,16 @@ class Video extends Component {
     render() {
         return (
             <View style={{flex: 1, marginTop: 20}}>
-                <Grid
-                    data={this.state.data}
-                    style={{flex: 1, marginTop: 20}}
-                    itemsPerRow={2}
-                    renderItem={item => (
-                        <VideoCell info={item}/>
-                    )}
-                    refreshControl={
-                        <RefreshControl
-                            refreshing={this.state.isRefreshing}
-                            onRefresh={this.onHeaderRefresh}
-                        />
-                    }
-                    onEndReached={this.onFooterRefresh}
-                    onEndReachedThreshold={0.1}
-                />
+            <RefreshListView
+                data={this.state.data}
+                numColumns={2}
+                renderItem={item => (
+                    <VideoCell info={item}/>
+                )}
+                onHeaderRefresh={this.onHeaderRefresh}
+                onFooterRefresh={this.onFooterRefresh}
+                refreshState={this.state.refreshState}
+            />
             </View>
         )
     }

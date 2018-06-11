@@ -23,14 +23,14 @@ type Props = {
 
 class VideoCell extends Component<Props> {
     render() {
-        let {info} = this.props
-        var url = info.raw_data.first_frame_image_list[0].url
+        let info = this.props.info.item.raw_data
+        var url = info.first_frame_image_list[0].url
         return(
             <View style={{flex: 1, height: imageHeight, margin: 1,}}>
                 <ImageBackground style={{flex:1}} source={{uri: url}}>
                     <View style={{justifyContent: 'flex-end',flex: 1}}>
                         <View style={styles.titleContainer}>
-                            <Text style={styles.title} numberOfLines={2}> {info.raw_data.title} </Text>
+                            <Text style={styles.title} numberOfLines={2}> {info.title} </Text>
                         </View>
                     </View>
                 </ImageBackground>
